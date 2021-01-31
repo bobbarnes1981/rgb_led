@@ -34,30 +34,105 @@ void setup() {
 }
 
 void loop() {
-  colourStep(strip.Color(255, 0, 0), 50);
-  colourStep(strip.Color(0, 255, 0), 50);
-  colourStep(strip.Color(0, 0, 255), 50);
+  // TODO: add button to switch between patterns
+  
+//  colourStep(strip.Color(255, 0, 0), 25);
+//  colourStep(strip.Color(0, 255, 0), 25);
+//  colourStep(strip.Color(0, 0, 255), 25);
 
-  christmasColour();
+//  christmasColour();
+//  lightChase();
+  lightFade();
   christmasTwinkle();
   
   // Some example procedures showing how to display to the pixels:
-  colorWipe(strip.Color(255, 0, 0), 50); // Red
-  colorWipe(strip.Color(0, 255, 0), 50); // Green
-  colorWipe(strip.Color(0, 0, 255), 50); // Blue
-//colorWipe(strip.Color(0, 0, 0, 255), 50); // White RGBW
-  // Send a theater pixel chase in...
-  theaterChase(strip.Color(127, 127, 127), 50); // White
-  theaterChase(strip.Color(127, 0, 0), 50); // Red
-  theaterChase(strip.Color(0, 0, 127), 50); // Blue
+//  colorWipe(strip.Color(255, 0, 0), 50); // Red
+//  colorWipe(strip.Color(0, 255, 0), 50); // Green
+//  colorWipe(strip.Color(0, 0, 255), 50); // Blue
 
-  rainbow(20);
-  rainbowCycle(20);
-  theaterChaseRainbow(50);
+  // Send a theater pixel chase in...
+//  theaterChase(strip.Color(127, 127, 127), 50); // White
+//  theaterChase(strip.Color(127, 0, 0), 50); // Red
+//  theaterChase(strip.Color(0, 0, 127), 50); // Blue
+
+//  rainbow(20);
+//  rainbowCycle(20);
+//  theaterChaseRainbow(50);
+}
+
+void lightChase() {
+  uint32_t red = strip.Color(255, 0, 0);
+  uint32_t yellow = strip.Color(255, 255, 0);
+  uint32_t green = strip.Color(0, 255, 0);
+  uint32_t blue = strip.Color(0, 0, 255);
+
+  for (int j = 0; j < 4; j++) {
+    for (uint16_t i = 0; i < strip.numPixels(); i++) {
+      switch ((i+j) % 4) {
+        case 0:
+          strip.setPixelColor(i, red);
+          break;
+        case 1:
+          strip.setPixelColor(i, yellow);
+          break;
+        case 2:
+          strip.setPixelColor(i, green);
+          break;
+        case 3:
+          strip.setPixelColor(i, blue);
+          break;
+      }
+    }
+    strip.show();
+    delay(500);
+  }
+}
+
+void lightFade() {
+  for (int j = 0; j < 255; j+=5) {
+    for (uint16_t i = 0; i < strip.numPixels(); i++) {
+      switch (i % 4) {
+        case 0:
+          strip.setPixelColor(i, strip.Color(j, 0, 0));
+          break;
+        case 1:
+          strip.setPixelColor(i, strip.Color(j, j, 0));
+          break;
+        case 2:
+          strip.setPixelColor(i, strip.Color(0, j, 0));
+          break;
+        case 3:
+          strip.setPixelColor(i, strip.Color(0, 0, j));
+          break;
+      }
+    }
+    strip.show();
+    delay(20);
+  }
+  for (int j = 255; j >= 0; j-=5) {
+    for (uint16_t i = 0; i < strip.numPixels(); i++) {
+      switch (i % 4) {
+        case 0:
+          strip.setPixelColor(i, strip.Color(j, 0, 0));
+          break;
+        case 1:
+          strip.setPixelColor(i, strip.Color(j, j, 0));
+          break;
+        case 2:
+          strip.setPixelColor(i, strip.Color(0, j, 0));
+          break;
+        case 3:
+          strip.setPixelColor(i, strip.Color(0, 0, j));
+          break;
+      }
+    }
+    strip.show();
+    delay(20);
+  }
 }
 
 void colourStep(uint32_t c, uint8_t wait) {
-  for(uint16_t i=0; i<strip.numPixels()+1; i++) {
+  for(uint16_t i=0; i<strip.numPixels(); i++) {
     for(uint16_t j=0; j<strip.numPixels();j++) {
       if(i==j) {
         strip.setPixelColor(j, c);
@@ -68,6 +143,7 @@ void colourStep(uint32_t c, uint8_t wait) {
     strip.show();
     delay(wait);
   }
+  allOff();
 }
 
 void christmasColour() {
@@ -87,10 +163,7 @@ void christmasColour() {
     delay(500);
     check = check == 0 ? 1 : 0; // invert
   }
-  for (uint16_t i = 0; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(0, 0, 0));
-  }
-  strip.show();
+  allOff();
 }
 
 void christmasTwinkle() {
@@ -183,4 +256,11 @@ uint32_t Wheel(byte WheelPos) {
   }
   WheelPos -= 170;
   return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+}
+
+void allOff() {
+  for (uint16_t i = 0; i < strip.numPixels(); i++) {
+    strip.setPixelColor(i, strip.Color(0, 0, 0));
+  }
+  strip.show();
 }
